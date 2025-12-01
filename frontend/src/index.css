@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Gabriola&display=swap');
+
+:root {
+  --primary: rgb(39, 100, 180);
+  --primary-light: #e8f1ff;
+  --accent: #f0a037ff;
+  --accent-mid: rgb(241, 197, 139);
+  --accent-light: #fef3e6;
+  --success: #10b981;
+  --success-light: #ecfdf5;
+  --neutral-50: #fafafa;
+  --neutral-100: #f3f4f6;
+  --neutral-200: #e5e7eb;
+  --neutral-300: #d1d5db;
+  --neutral-400: #9ca3af;
+  --neutral-600: #4b5563;
+  --neutral-700: #374151;
+  --neutral-900: #111827;
+  --agent-1: #6366f1;
+  --agent-1-light: #eef2ff;
+  --agent-2: #8b5cf6;
+  --agent-2-light: #f5f3ff;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--neutral-50);
+  color: var(--neutral-900);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.markdown-content {
+  padding: 12px;
+  line-height: 1.7;
+}
+
+.markdown-content p {
+  margin-bottom: 12px;
+  color: var(--neutral-700);
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  margin-left: 20px;
+  margin-bottom: 12px;
+  color: var(--neutral-700);
+}
+
+.markdown-content li {
+  margin-bottom: 6px;
+  line-height: 1.7;
+}
+
+.markdown-content code {
+  background-color: var(--neutral-100);
+  color: #d73a49;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-family: "Monaco", "Menlo", monospace;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.markdown-content pre {
+  background-color: var(--neutral-900);
+  color: #e1e4e8;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+.markdown-content pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid var(--primary);
+  padding-left: 12px;
+  margin-left: 0;
+  color: var(--neutral-600);
+  font-style: italic;
+}

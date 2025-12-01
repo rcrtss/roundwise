@@ -1,0 +1,81 @@
+# RoundWise MVP Configuration
+# This file defines models and system parameters
+
+# LLM Model Configuration
+models:
+  gatekeeper: "openai/gpt-4-turbo"
+  notary: "openai/gpt-4-turbo"
+  expert_default: "openai/gpt-4o-mini"
+  
+  # Available models for expert selection (frontend dropdown)
+  available:
+    - value: "openai/gpt-4-turbo"
+      label: "OpenAI GPT-4 Turbo"
+    - value: "openai/gpt-4o-mini"
+      label: "OpenAI GPT-4o Mini"
+    - value: "google/gemini-2.0-flash-001"
+      label: "Google Gemini 2.0 Flash"
+    - value: "google/gemini-2.5-flash"
+      label: "Google Gemini 2.5 Flash"
+    - value: "anthropic/claude-3.5-sonnet"
+      label: "Anthropic Claude 3.5 Sonnet"
+
+# Server Configuration
+server:
+  port: 8000
+  host: "0.0.0.0"
+
+# Frontend Configuration
+frontend:
+  url: "http://localhost:5173"
+  allowed_ports:
+    - 5173
+    - 5174
+    - 3000
+
+# LLM Query Parameters
+llm:
+  gatekeeper:
+    temperature: 0.7
+    max_tokens: 1500
+    timeout: 60
+  
+  expert:
+    temperature: 0.7
+    max_tokens: 2000
+    timeout: 60
+  
+  rebuttal:
+    temperature: 0.7
+    max_tokens: 1500
+    timeout: 60
+  
+  notary:
+    temperature: 0.7
+    max_tokens: 2000
+    timeout: 60
+  
+  scoring:
+    temperature: 0.5
+    max_tokens: 1000
+    timeout: 60
+
+# Storage Configuration
+storage:
+  type: "json"
+  path: "data/conversations"
+  auto_create: true
+
+# Feature Flags
+features:
+  mock_mode: false
+  graceful_degradation: true
+  enable_logging: true
+
+# API Configuration
+api:
+  cors_allowed_origins:
+    - "http://localhost:5173"
+    - "http://localhost:5174"
+    - "http://localhost:3000"
+    - "localhost"
