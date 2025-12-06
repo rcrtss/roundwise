@@ -130,12 +130,11 @@ The proposed expert roles are displayed to the user where they can be modified b
 ## Key Design Decisions
 
 ### User Experience
-- Users can see between steps instead of waiting for a final response with all the information, that is:
-  - After Stage 0: see proposed expert roles and modify
-  - After Stage 1: see initial analyses summaries
-  - After Stage 2: see rebuttal summaries
-  - After Stage 3: see notary synthesis and proposed solutions
-  - After Stage 4: see final scoring
+- **Stage 0 (Gatekeeper)**: User sees normalized problem and proposed expert roles. They can modify the agents and their mission, then confirm with the "Confirm & Proceed" button.
+- **After Stage 0 confirmation**: All stages (1-4) run automatically in sequence with no pause between them.
+- **Processing Indicator**: A small, aesthetic "Processing..." box appears below the last shown stage showing the system is working on the next stage.
+- **Auto-scroll**: The view automatically scrolls to the latest content (either a new stage or the processing indicator), keeping the user informed of progress.
+- **Final Result**: All stages are visible in sequence, showing the complete deliberation flow.
 
 ### Gatekeeper Role
 - Normalizes user problem to reduce ambiguity.

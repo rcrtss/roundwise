@@ -52,3 +52,9 @@ export async function sendMessage(conversationId, message, type = "message", pro
   
   return response.json();
 }
+
+export async function getProgress(conversationId) {
+  const response = await fetch(`${API_BASE_URL}/api/conversations/${conversationId}/progress`);
+  if (!response.ok) throw new Error("Failed to fetch progress");
+  return response.json();
+}

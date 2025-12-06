@@ -45,18 +45,38 @@
   gap: 16px;
 }
 
-.score-item {
+.aggregate-scores-wrapper {
+  display: grid;
+  grid-template-columns: 0.6fr 1.4fr;
+  gap: 24px;
+}
+
+.bars-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.score-bar-row {
   display: flex;
   gap: 12px;
   align-items: center;
 }
 
+.rank-badge {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--primary);
+  min-width: 24px;
+  text-align: right;
+}
+
 .score-bar-container {
-  flex: 1;
   height: 24px;
   background-color: #f0f0f0;
   border-radius: 4px;
   overflow: hidden;
+  flex: 1;
 }
 
 .score-bar {
@@ -67,11 +87,24 @@
   min-width: 2px;
 }
 
+.labels-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.score-label-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  height: 24px;
+}
+
 .score-label {
   display: flex;
   gap: 12px;
   align-items: center;
-  min-width: 200px;
+  min-width: 0;
 }
 
 .score-value {
@@ -86,6 +119,11 @@
   font-size: 13px;
   color: var(--neutral-700);
   line-height: 1.4;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: auto;
+  min-width: 0;
 }
 
 .expert-scores {

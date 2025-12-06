@@ -28,7 +28,7 @@ export const mockData = {
       role_name: "Career Growth Strategist",
       initial_recommendation: "The startup opportunity offers significant growth potential with equity upside and direct exposure to decision-making. You'll develop broader skills faster and build stronger industry connections.",
       one_sentence_summary: "Take the startup role for accelerated career growth and valuable equity upside if the company succeeds.",
-      key_reasoning_points: {
+      critical_points_to_consider: {
         "1": "Startups provide faster skill development and broader responsibilities compared to larger corporations",
         "2": "Early equity could be worth significant multiples if company succeeds, offering long-term wealth potential",
         "3": "Direct access to founders and strategic decisions builds valuable executive network and mentorship"
@@ -38,7 +38,7 @@ export const mockData = {
       role_name: "Risk Management Analyst",
       initial_recommendation: "Current company offers proven stability and comprehensive benefits, but startup risk is manageable if you have adequate financial reserves. The key is having sufficient emergency savings.",
       one_sentence_summary: "The startup is viable only if you have 12+ months of emergency savings and can absorb potential income loss.",
-      key_reasoning_points: {
+      critical_points_to_consider: {
         "1": "Startups have high failure rate (roughly 90% don't reach profitability in first 5 years)",
         "2": "Current company provides valuable security net including health insurance, 401k match, and predictable income",
         "3": "Equity vesting typically occurs over 4 years, so you won't realize gains immediately"
@@ -51,7 +51,7 @@ export const mockData = {
       role_name: "Career Growth Strategist",
       final_stance: "While the risk analyst's concerns are valid, the startup's potential for growth outweighs the risk if proper financial cushioning exists. I'd recommend the startup for someone early-to-mid career.",
       one_sentence_summary: "The risks are manageable for a financially prepared individual, making the growth opportunity worth taking.",
-      key_reasoning_points: {
+      critical_points_to_consider: {
         "1": "At this career stage, taking calculated risks has higher ROI than safety - the learning and network benefits compound",
         "2": "Equity upside potential (even with 90% failure rate) justifies the move if financial runway exists",
         "3": "Staying in a safe role now may limit options later - early career is optimal time for risk"
@@ -62,7 +62,7 @@ export const mockData = {
       role_name: "Risk Management Analyst",
       final_stance: "I acknowledge the growth potential, but emphasize this decision hinges entirely on financial readiness. If emergency savings exist, proceed cautiously. If not, this is premature.",
       one_sentence_summary: "Financial preparedness is the deciding factor - with adequate savings, this move is acceptable; without it, stay put.",
-      key_reasoning_points: {
+      critical_points_to_consider: {
         "1": "The strategist overlooks that most startup equity becomes worthless - focus on the majority case, not the unicorn scenario",
         "2": "Career growth at a stable company is still substantial; the gap isn't as large as growth experts suggest",
         "3": "Mental peace from financial security shouldn't be underestimated - burnout risk at startups is real"

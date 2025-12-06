@@ -34,9 +34,9 @@ export default function Stage1({ stage1Data = {} }) {
                   <p>{expert.initial_recommendation}</p>
                 </div>
                 <div className="reasoning-section">
-                  <h4>Key Reasoning Points:</h4>
+                  <h4>Critical Points:</h4>
                   <ol>
-                    {Object.values(expert.key_reasoning_points || {}).map(
+                    {Object.values(expert.critical_points_to_consider || {}).map(
                       (point, i) => (
                         <li key={i}>{point}</li>
                       )

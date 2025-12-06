@@ -40,26 +40,32 @@ export default function Stage4({ stage4Data = {} }) {
         
         <div className="scoring-section">
           <h4>Aggregate Scores</h4>
-          <div className="score-bars">
-            {sortedSolutions.map((solution) => (
-              <div key={solution.text} className="score-item">
-                <div className="score-bar-container">
-                  <div
-                    className="score-bar"
-                    style={{
-                      width: `${(solution.total / maxScore) * 100}%`,
-                    }}
-                  />
+          <div className="aggregate-scores-wrapper">
+            <div className="bars-column">
+              {sortedSolutions.map((solution, index) => (
+                <div key={solution.text} className="score-bar-row">
+                  <div className="rank-badge">#{index + 1}</div>
+                  <div className="score-bar-container">
+                    <div
+                      className="score-bar"
+                      style={{
+                        width: `${(solution.total / maxScore) * 100}%`,
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="score-label">
-                  <span className="score-value">{solution.total}</span>
+              ))}
+            </div>
+            <div className="labels-column">
+              {sortedSolutions.map((solution) => (
+                <div key={solution.text} className="score-label-row">
+                  <span className="score-value">{solution.total} points</span>
                   <span className="score-text">
-                    {solution.id && <span className="solution-id">[{solution.id}]</span>}
-                    {solution.text}
+                    — {solution.text}
                   </span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { createConversation, sendMessage } from "./api";
+import React, { useState, useEffect, useRef } from "react";
+import { createConversation, sendMessage, getProgress } from "./api";
 import { mockData } from "./mockData";
 import ChatInterface from "./components/ChatInterface";
 import Stage0 from "./components/Stage0";
@@ -7,7 +7,7 @@ import Stage1 from "./components/Stage1";
 import Stage2 from "./components/Stage2";
 import Stage3 from "./components/Stage3";
 import Stage4 from "./components/Stage4";
-import ContinueButton from "./components/ContinueButton";
+import ProcessingIndicator from "./components/ProcessingIndicator";
 import "./App.css";
 
 // Toggle this to test without API calls
@@ -19,8 +19,19 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [currentStage, setCurrentStage] = useState(null);
   const [stage0Data, setStage0Data] = useState(null);
-  const [visibleStages, setVisibleStages] = useState(["stage0"]); // Track which stages to show
-  const [lastAssistantMsg, setLastAssistantMsg] = useState(null); // Cache last assistant message
+  const [visibleStages, setVisibleStages] = useState(["stage0"]);
+  const [lastAssistantMsg, setLastAssistantMsg] = useState(null);
+  const [processingStage, setProcessingStage] = useState(null); // Track which stage is processing
+  const conversationEndRef = useRef(null);
+
+  // Auto-scroll to latest content
+  const scrollToBottom = () => {
+    conversationEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [visibleStages, processingStage]);
 
   // Initialize conversation on mount
   useEffect(() => {
@@ -35,6 +46,7 @@ export default function App() {
     if (!conversationId) return;
 
     setIsLoading(true);
+    setProcessingStage("stage0");
     try {
       // Add user message to UI
       setMessages((prev) => [
@@ -80,9 +92,7 @@ export default function App() {
         setStage0Data(response.stage0);
         setCurrentStage("stage0");
         setVisibleStages(["stage0"]);
-      } else if (response.stage1) {
-        setCurrentStage("stage1");
-        setVisibleStages((prev) => [...prev, "stage1"]);
+        setProcessingStage(null);
       }
     } catch (error) {
       console.error("Error sending message:", error);
@@ -94,88 +104,7 @@ export default function App() {
           error: true,
         },
       ]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleContinueStage = async (nextStageNum) => {
-    if (!conversationId || !lastAssistantMsg) return;
-
-    setIsLoading(true);
-    try {
-      let response;
-
-      if (MOCK_MODE) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1200));
-        
-        if (nextStageNum === "2") {
-          response = {
-            content: "Mock stage 2 rebuttal",
-            stage2: mockData.stage2,
-            metadata: lastAssistantMsg.metadata,
-          };
-        } else if (nextStageNum === "3") {
-          response = {
-            content: "Mock stage 3 synthesis",
-            stage3: mockData.stage3,
-            metadata: lastAssistantMsg.metadata,
-          };
-        } else if (nextStageNum === "4") {
-          response = {
-            content: "Mock stage 4 scoring",
-            stage4: mockData.stage4,
-            metadata: {
-              ...lastAssistantMsg.metadata,
-              aggregate_rankings: [
-                ["Request extended due diligence period - meet startup team, understand product roadmap, and verify market fit", 18],
-                ["Accept startup offer with condition of negotiating equity terms and ensuring 12+ months financial runway", 15],
-                ["Stay in current role for 12-18 months while building emergency savings, then reassess market opportunities", 4],
-                ["Negotiate remote work or flexible arrangement with current company to maintain stability while seeking growth", 3],
-                ["Counter-offer to current company highlighting startup offer to negotiate higher title/compensation/growth opportunities", 3]
-              ]
-            },
-          };
-        }
-      } else {
-        // Request next stage from backend
-        response = await sendMessage(
-          conversationId,
-          `Requesting stage ${nextStageNum}`,
-          "stage_request",
-          null,
-          nextStageNum
-        );
-      }
-
-      // Update the last assistant message with new stage data
-      const updatedAssistantMsg = {
-        ...lastAssistantMsg,
-        stage1: response.stage1 || lastAssistantMsg.stage1,
-        stage2: response.stage2 || lastAssistantMsg.stage2,
-        stage3: response.stage3 || lastAssistantMsg.stage3,
-        stage4: response.stage4 || lastAssistantMsg.stage4,
-        metadata: response.metadata || lastAssistantMsg.metadata,
-        content: response.content,
-      };
-
-      // Update messages with the updated assistant message
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        newMessages[newMessages.length - 1] = updatedAssistantMsg;
-        return newMessages;
-      });
-
-      setLastAssistantMsg(updatedAssistantMsg);
-
-      // Update visible stages
-      const stageMap = { "2": "stage2", "3": "stage3", "4": "stage4" };
-      setVisibleStages((prev) => [...prev, stageMap[nextStageNum]]);
-      setCurrentStage(stageMap[nextStageNum]);
-    } catch (error) {
-      console.error("Error continuing to next stage:", error);
-      alert(`Error: ${error.message}`);
+      setProcessingStage(null);
     } finally {
       setIsLoading(false);
     }
@@ -185,6 +114,7 @@ export default function App() {
     if (!conversationId || !stage0Data) return;
 
     setIsLoading(true);
+    setProcessingStage("stage1");
     try {
       // Update agents in stage0Data
       const updatedStage0 = {
@@ -195,27 +125,59 @@ export default function App() {
       let response;
 
       if (MOCK_MODE) {
-        // Simulate API delay
-        await new Promise(resolve => setTimeout(resolve, 1200));
+        // Simulate API delay with stage progression
+        setProcessingStage("stage1");
+        await new Promise(resolve => setTimeout(resolve, 400));
+        
+        setProcessingStage("stage2");
+        await new Promise(resolve => setTimeout(resolve, 400));
+        
+        setProcessingStage("stage3");
+        await new Promise(resolve => setTimeout(resolve, 400));
+        
+        setProcessingStage("stage4");
+        await new Promise(resolve => setTimeout(resolve, 400));
+        
         response = {
           content: "Mock full analysis",
           stage1: mockData.stage1,
+          stage2: mockData.stage2,
+          stage3: mockData.stage3,
+          stage4: mockData.stage4,
           metadata: {
             label_to_model: {},
             aggregate_rankings: []
           }
         };
       } else {
-        // Send role update to backend - only triggers Stage 1
-        response = await sendMessage(
+        // Send role update to backend - triggers all stages 1-4
+        const sendPromise = sendMessage(
           conversationId,
           "Confirmed roles, proceeding to analysis",
           "role_update",
           confirmedAgents
         );
+
+        // Start polling for progress
+        const progressPollInterval = setInterval(async () => {
+          try {
+            const progress = await getProgress(conversationId);
+            if (progress.current_stage) {
+              setProcessingStage(progress.current_stage);
+            }
+          } catch (error) {
+            // Silently fail on progress polling
+          }
+        }, 500);
+
+        // Wait for backend response
+        response = await sendPromise;
+
+        // Clear polling
+        clearInterval(progressPollInterval);
       }
 
-      // Store response and update stages
+      // Create initial message with stage0
       const assistantMsg = {
         role: "assistant",
         content: response.content,
@@ -229,12 +191,22 @@ export default function App() {
 
       setMessages((prev) => [...prev, assistantMsg]);
       setLastAssistantMsg(assistantMsg);
-      setCurrentStage("stage1");
+      
+      // Show all stages immediately
+      const newVisibleStages = ["stage0"];
+      if (response.stage1) newVisibleStages.push("stage1");
+      if (response.stage2) newVisibleStages.push("stage2");
+      if (response.stage3) newVisibleStages.push("stage3");
+      if (response.stage4) newVisibleStages.push("stage4");
+      
+      setVisibleStages(newVisibleStages);
+      setCurrentStage("stage4");
       setStage0Data(null);
-      setVisibleStages(["stage0", "stage1"]);
+      setProcessingStage(null);
     } catch (error) {
       console.error("Error confirming roles:", error);
       alert(`Error: ${error.message}`);
+      setProcessingStage(null);
     } finally {
       setIsLoading(false);
     }
@@ -274,43 +246,16 @@ export default function App() {
                         />
                       )}
                       {msg.stage1 && visibleStages.includes("stage1") && (
-                        <>
-                          <Stage1 stage1Data={msg.stage1} />
-                          {visibleStages.length === 2 && !visibleStages.includes("stage2") && (
-                            <ContinueButton
-                              onClick={() => handleContinueStage("2")}
-                              isLoading={isLoading}
-                              stageNumber={2}
-                            />
-                          )}
-                        </>
+                        <Stage1 stage1Data={msg.stage1} />
                       )}
                       {msg.stage2 && visibleStages.includes("stage2") && (
-                        <>
-                          <Stage2
-                            stage2Data={msg.stage2}
-                            labelToModel={msg.metadata?.label_to_model || {}}
-                          />
-                          {visibleStages.length === 3 && !visibleStages.includes("stage3") && (
-                            <ContinueButton
-                              onClick={() => handleContinueStage("3")}
-                              isLoading={isLoading}
-                              stageNumber={3}
-                            />
-                          )}
-                        </>
+                        <Stage2
+                          stage2Data={msg.stage2}
+                          labelToModel={msg.metadata?.label_to_model || {}}
+                        />
                       )}
                       {msg.stage3 && visibleStages.includes("stage3") && (
-                        <>
-                          <Stage3 stage3Data={msg.stage3} />
-                          {visibleStages.length === 4 && !visibleStages.includes("stage4") && (
-                            <ContinueButton
-                              onClick={() => handleContinueStage("4")}
-                              isLoading={isLoading}
-                              stageNumber={4}
-                            />
-                          )}
-                        </>
+                        <Stage3 stage3Data={msg.stage3} />
                       )}
                       {msg.stage4 && visibleStages.includes("stage4") && (
                         <Stage4 stage4Data={msg.stage4} />
@@ -321,6 +266,14 @@ export default function App() {
               )}
             </div>
           ))}
+          {processingStage && (
+            <div className="message message-assistant">
+              <div className="assistant-message">
+                <ProcessingIndicator stage={processingStage} />
+              </div>
+            </div>
+          )}
+          <div ref={conversationEndRef} />
         </div>
       </main>
 

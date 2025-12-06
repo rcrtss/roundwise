@@ -33,7 +33,7 @@ async def stage1_expert_responses(
         "expert_1": {
             "initial_recommendation": str,
             "one_sentence_summary": str,
-            "key_reasoning_points": {1: str, 2: str, ...}
+            "critical_points_to_consider": {1: str, 2: str, ...}
         },
         ...
     }
@@ -48,12 +48,12 @@ Your mission: {role_mission}
 Provide an initial analysis of the problem that has been presented to you. Structure your response as valid JSON:
 
 {{
-  "initial_recommendation": "Your recommended approach or solution (2-3 sentences)",
-  "one_sentence_summary": "A concise one-sentence summary of your position",
-  "key_reasoning_points": {{
-    "1": "First key reasoning point",
-    "2": "Second key reasoning point",
-    "3": "Third key reasoning point"
+  "initial_recommendation": "Markdown of your reasoning to support your position (max 6 sentences)",
+  "one_sentence_summary": "A one sentence chat-like message that explains your overall position",
+  "critical_points_to_consider": {{
+    "1": "First key point",
+    "2": "Second key point",
+    "3": "Third key point"
   }}
 }}
 
@@ -103,7 +103,7 @@ Provide your initial analysis now."""
                     "role_name": agent["role_name"],
                     "initial_recommendation": parsed.get("initial_recommendation", ""),
                     "one_sentence_summary": parsed.get("one_sentence_summary", ""),
-                    "key_reasoning_points": parsed.get("key_reasoning_points", {})
+                    "critical_points_to_consider": parsed.get("critical_points_to_consider", {})
                 }
             except Exception as e:
                 print(f"Error parsing response for {agent_id}: {e}")
@@ -111,14 +111,14 @@ Provide your initial analysis now."""
                     "role_name": agent["role_name"],
                     "initial_recommendation": response["content"][:500],
                     "one_sentence_summary": "See full analysis",
-                    "key_reasoning_points": {"1": response["content"][:300]}
+                    "critical_points_to_consider": {"1": response["content"][:300]}
                 }
         else:
             result[agent_id] = {
                 "role_name": agent["role_name"],
                 "initial_recommendation": "Response not available",
                 "one_sentence_summary": "Failed to generate analysis",
-                "key_reasoning_points": {}
+                "critical_points_to_consider": {}
             }
     
     return result
@@ -155,14 +155,14 @@ Read their analysis carefully, analyse critically and be autocritical with yours
 Structure your response as valid JSON:
 
 {{
-  "final_stance": "Your refined position after considering the other expert's perspective (2-3 sentences)",
-  "one_sentence_summary": "A concise one-sentence summary of your updated position",
-  "key_reasoning_points": {{
-    "1": "Updated reasoning point",
-    "2": "Another reasoning point",
-    "3": "Final reasoning point"
+  "final_stance": "Your refined position after considering the other expert's perspective",
+  "one_sentence_summary": "A concise short chat-like message that explains your refined position",
+  "critical_points_to_consider": {{
+    "1": "Most relevant point",
+    "2": "Second most relevant point",
+    "3": "Final point"
   }},
-  "critical_evaluation": "Your evaluation of the other expert's analysis"
+  "critical_evaluation": "Your overall evaluation of the problem given both perspectives"
 }}
 
 IMPORTANT
@@ -194,7 +194,7 @@ IMPORTANT
 Their initial recommendation: {other_response.get('initial_recommendation', '')}
 
 Their key reasoning points:
-{chr(10).join(f"- {other_response.get('key_reasoning_points', {}).get(str(k), '')}" for k in range(1, 4)) if other_response.get('key_reasoning_points') else ""}"""
+{chr(10).join(f"- {other_response.get('critical_points_to_consider', {}).get(str(k), '')}" for k in range(1, 4)) if other_response.get('critical_points_to_consider') else ""}"""
         
         rebuttal_prompt = f"""The problem was: {normalized_problem}
 
@@ -224,7 +224,7 @@ Now provide your rebuttal and refined analysis:"""
                     "other_expert_role": stage1_responses[other_agent_id].get("role_name", ""),
                     "final_stance": parsed.get("final_stance", ""),
                     "one_sentence_summary": parsed.get("one_sentence_summary", ""),
-                    "key_reasoning_points": parsed.get("key_reasoning_points", {}),
+                    "critical_points_to_consider": parsed.get("critical_points_to_consider", {}),
                     "critical_evaluation": parsed.get("critical_evaluation", "")
                 }
             except Exception as e:
@@ -234,7 +234,7 @@ Now provide your rebuttal and refined analysis:"""
                     "other_expert_role": stage1_responses[other_agent_id].get("role_name", ""),
                     "final_stance": response["content"][:500],
                     "one_sentence_summary": "See full analysis",
-                    "key_reasoning_points": {},
+                    "critical_points_to_consider": {},
                     "critical_evaluation": ""
                 }
         else:
@@ -243,7 +243,7 @@ Now provide your rebuttal and refined analysis:"""
                 "other_expert_role": stage1_responses[other_agent_id].get("role_name", ""),
                 "final_stance": "Rebuttal not available",
                 "one_sentence_summary": "Failed to generate rebuttal",
-                "key_reasoning_points": {},
+                "critical_points_to_consider": {},
                 "critical_evaluation": ""
             }
     
@@ -290,7 +290,7 @@ Your job:
 
 Return only valid JSON:
 {{
-  "summary_markdown": "A well-structured markdown summary of the discussion",
+  "summary_markdown": "A bulleted markdown summary capturing the key points of the expert discussion, with headers: Problem Overview, Expert Analyses, Key Agreements and Disagreements. Max 3 points per section.",
   "proposed_solutions": [
     {{"id": "1", "text": "Solution 1 or recommendation mentioned by experts"}},
     {{"id": "2", "text": "Solution 2 or recommendation mentioned by experts"}},
